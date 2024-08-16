@@ -40,7 +40,7 @@ public class RecommenBookDAO {
             // Step 4: Recommend books based on similar users
             for (Map.Entry<String, Double> entry : similarityScores.entrySet()) {
                 String similarUserCard = entry.getKey();
-                if (entry.getValue() > 0.7) { // Threshold for similarity
+                if (entry.getValue() > 0.6) { // Threshold for similarity
                     Map<String, Integer> similarUserBooks = getUserBooks(connection, similarUserCard);
                     for (String bookId : similarUserBooks.keySet()) {
                         if (!targetUserBooks.containsKey(bookId)) {
