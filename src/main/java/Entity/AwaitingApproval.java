@@ -2,10 +2,6 @@
 
 package Entity;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class AwaitingApproval {
 
 private int id;

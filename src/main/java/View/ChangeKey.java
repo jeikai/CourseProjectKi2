@@ -8,10 +8,6 @@ import Entity.User;
 import java.sql.Date;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Line's laptop
- */
 public class ChangeKey extends javax.swing.JFrame {
 
     /**

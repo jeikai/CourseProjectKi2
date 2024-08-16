@@ -1,5 +1,3 @@
-
-
 package DAO;
 
 import Entity.CallCard;
@@ -11,18 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class ReturnBookDAO {
 
-public ReturnBook findByCallCardId(String callCardId){
-    ReturnBook returnBook = new ReturnBook();
-    String SQL = "SELECT*FROM `ReturnBook` WHERE `callCardId` = ?";
-    CallCardDAO callCardDAO = new CallCardDAO();
-    
-    try {
+    public ReturnBook findByCallCardId(String callCardId) {
+        ReturnBook returnBook = new ReturnBook();
+        String SQL = "SELECT*FROM `ReturnBook` WHERE `callCardId` = ?";
+        CallCardDAO callCardDAO = new CallCardDAO();
+
+        try {
             Connection connection = JDBC.Connection();
             PreparedStatement preparedStatement = connection.prepareStatement(SQL);
             preparedStatement.setString(1, callCardId);
@@ -39,24 +33,24 @@ public ReturnBook findByCallCardId(String callCardId){
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    return returnBook;
-}
+        return returnBook;
+    }
 
-public void save(ReturnBook returnBook){
-    String SQL = "INSERT INTO `ReturnBook`(`callCardId`,`payDay`,`status`,`fines`,`note`) VALUES(?,?,?,?,?)";
-    
-    try {
+    public void save(ReturnBook returnBook) {
+        String SQL = "INSERT INTO `ReturnBook`(`callCardId`,`payDay`,`status`,`fines`,`note`) VALUES(?,?,?,?,?)";
+
+        try {
             Connection connection = JDBC.Connection();
             PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-            preparedStatement.setString(1,returnBook.getCallCard().getCallCardId());
-            preparedStatement.setString(2,returnBook.getPayDay().toString());
+            preparedStatement.setString(1, returnBook.getCallCard().getCallCardId());
+            preparedStatement.setString(2, returnBook.getPayDay().toString());
             preparedStatement.setString(3, returnBook.getStatus());
-            preparedStatement.setInt(4,returnBook.getFines());
-            preparedStatement.setString(5,returnBook.getNote());
+            preparedStatement.setInt(4, returnBook.getFines());
+            preparedStatement.setString(5, returnBook.getNote());
             int result = preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-}
+    }
 }

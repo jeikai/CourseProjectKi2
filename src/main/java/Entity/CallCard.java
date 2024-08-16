@@ -5,10 +5,6 @@ package Entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class CallCard {
     private String callCardId;
     private User user;

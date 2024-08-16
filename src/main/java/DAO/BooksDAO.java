@@ -9,53 +9,53 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class BooksDAO {
 
     public List<Book> findAll(FilterForm filter) {
         List<Book> listBook = new ArrayList<>();
-        String where = "";
-        if (!filter.getSearch().equals("") && !filter.getTypeSearch().equals("")) {
-            where += "where " + filter.getTypeSearch() + " LIKE '%" + filter.getSearch() + "%'";
+        StringBuilder where = new StringBuilder();
+        List<Object> parameters = new ArrayList<>();
 
+        // Build the WHERE clause based on the filter criteria
+        if (!filter.getSearch().isEmpty() && !filter.getTypeSearch().isEmpty()) {
+            where.append(" WHERE ").append(filter.getTypeSearch()).append(" LIKE ?");
+            parameters.add("%" + filter.getSearch() + "%");
         }
 
-        if (!filter.getTypeFilter().equals("") && !filter.getFilter().equals("")) {
-            if (where.equals("")) {
-                where += " where " + filter.getTypeFilter() + " = '" + filter.getFilter() + "'";
+        if (!filter.getTypeFilter().isEmpty() && !filter.getFilter().isEmpty()) {
+            if (where.length() == 0) {
+                where.append(" WHERE ");
             } else {
-                where += " AND " + filter.getTypeFilter() + " = '" + filter.getFilter() + "'";
+                where.append(" AND ");
             }
+            where.append(filter.getTypeFilter()).append(" = ?");
+            parameters.add(filter.getFilter());
         }
 
-        String SQL = "SELECT * FROM `Book` " + where;
-        try {
-            Connection connection = JDBC.Connection();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(SQL);
+        String SQL = "SELECT * FROM `Book`" + where.toString();
+        try (Connection connection = JDBC.Connection(); PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
 
-            while (resultSet.next()) {
-                Book book = new Book();
-                book.setBookId(resultSet.getString("bookId"));
-                book.setName(resultSet.getString("name"));
-                book.setPublisher(resultSet.getString("publisher"));
-                book.setYearOfPublisher(resultSet.getInt("yearOfPublisher"));
-                book.setAuthor(resultSet.getString("author"));
-                book.setSubject(resultSet.getString("subject"));
-                book.setPrice(resultSet.getInt("price"));
-                book.setTotalQuantity(resultSet.getInt("totalQuantity"));
-                book.setSummary(resultSet.getString("summary"));
-
-                listBook.add(book);
-
+            // Set parameters for the PreparedStatement
+            for (int i = 0; i < parameters.size(); i++) {
+                preparedStatement.setObject(i + 1, parameters.get(i));
             }
 
-            connection.close();
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Book book = new Book();
+                    book.setBookId(resultSet.getString("bookId"));
+                    book.setName(resultSet.getString("name"));
+                    book.setPublisher(resultSet.getString("publisher"));
+                    book.setYearOfPublisher(resultSet.getInt("yearOfPublisher"));
+                    book.setAuthor(resultSet.getString("author"));
+                    book.setSubject(resultSet.getString("subject"));
+                    book.setPrice(resultSet.getInt("price"));
+                    book.setTotalQuantity(resultSet.getInt("totalQuantity"));
+                    book.setSummary(resultSet.getString("summary"));
 
+                    listBook.add(book);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,13 +137,13 @@ public class BooksDAO {
         }
         return false;
     }
-    
-    public void delete(String bookId){
-        String SQL = "DELETE FROM `Book` WHERE `bookId` = ?" ;  
+
+    public void delete(String bookId) {
+        String SQL = "DELETE FROM `Book` WHERE `bookId` = ?";
         try {
             Connection connection = JDBC.Connection();
             PreparedStatement preparedStatement = connection.prepareStatement(SQL);
-            preparedStatement.setString(1,bookId);
+            preparedStatement.setString(1, bookId);
             int result = preparedStatement.executeUpdate();
             connection.close();
         } catch (Exception e) {

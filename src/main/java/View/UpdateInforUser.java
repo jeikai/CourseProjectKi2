@@ -8,10 +8,6 @@ import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class UpdateInforUser extends javax.swing.JFrame {
 
     /**

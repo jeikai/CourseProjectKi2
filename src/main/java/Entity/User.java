@@ -6,10 +6,6 @@ package Entity;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class User {
     private String libraryCard;
     private String fullname;

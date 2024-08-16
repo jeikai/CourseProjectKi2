@@ -12,10 +12,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class CreateCallCard extends javax.swing.JFrame {
 
     /**

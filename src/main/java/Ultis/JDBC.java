@@ -2,10 +2,7 @@ package Ultis;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-/**
- *
- * @author Nguyen Dai Phat
- */
+
 public class JDBC {
     public static Connection Connection() throws SQLException{
          Connection conn = null;

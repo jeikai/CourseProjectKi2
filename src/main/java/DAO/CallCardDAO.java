@@ -13,10 +13,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class CallCardDAO {
 
     public void save(CallCard callCard) {

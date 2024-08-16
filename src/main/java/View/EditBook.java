@@ -3,10 +3,6 @@ import Entity.Book;
 import DAO.BooksDAO;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class EditBook extends javax.swing.JFrame {
     
     /**

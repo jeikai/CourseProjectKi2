@@ -2,10 +2,6 @@
 
 package Entity;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class Book {
 
 private String bookId;
@@ -105,6 +101,17 @@ private String summary;
         this.summary = summary;
     }
 
-   
-
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId='" + bookId + '\'' +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", yearOfPublisher=" + yearOfPublisher +
+                ", publisher='" + publisher + '\'' +
+                ", subject='" + subject + '\'' +
+                ", price=" + price +
+                ", totalQuantity=" + totalQuantity +
+                '}';
+    }
 }

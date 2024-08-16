@@ -17,10 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class HomeLibrarian extends javax.swing.JFrame {
 
     /**

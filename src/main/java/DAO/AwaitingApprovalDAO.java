@@ -13,10 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class AwaitingApprovalDAO {
     
     public List<AwaitingApproval> findAll (FilterForm filterForm) {

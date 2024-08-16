@@ -47,6 +47,7 @@ View\UpdateInforUser$1.class
 DAO\CallCardDAO.class
 View\HomeLibrarian$2.class
 View\HomeLibrarian$8.class
+DAO\RecommenBookDAO.class
 View\HomeLibrarian$11.class
 View\HomeLibrarian$29.class
 View\CreateBook$2.class

@@ -4,10 +4,6 @@ import Entity.Book;
 import javax.swing.JOptionPane;
 import DAO.BooksDAO;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class CreateBook extends javax.swing.JFrame {
 
     /**

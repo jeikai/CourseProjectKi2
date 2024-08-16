@@ -6,10 +6,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class CreateUser extends javax.swing.JFrame {
 
     /**

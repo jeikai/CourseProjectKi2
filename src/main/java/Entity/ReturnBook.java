@@ -5,10 +5,6 @@ package Entity;
 import java.time.LocalDate;
 import java.time.Period;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class ReturnBook {
     private String returnBookId;
     private CallCard callCard;

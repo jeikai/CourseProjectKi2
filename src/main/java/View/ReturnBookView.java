@@ -6,10 +6,6 @@ import Entity.ReturnBook;
 import java.sql.Date;
 import java.time.LocalDate;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class ReturnBookView extends javax.swing.JFrame {
 
     /**

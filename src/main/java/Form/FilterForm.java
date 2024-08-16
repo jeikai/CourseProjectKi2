@@ -1,11 +1,5 @@
 package Form;
 
-
-
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class FilterForm {
     private String typeSearch="";
     private String search="";

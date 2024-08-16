@@ -1,16 +1,12 @@
 package View;
 
 import DAO.BooksDAO;
+import DAO.RecommenBookDAO;
 import Entity.AwaitingApproval;
 import Entity.Book;
 import Entity.CallCard;
 import DAO.CallCardDAO;
 import Form.FilterForm;
-
-/**
- *
- * @author Nguyen Dai Phat
- */
 import Entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +17,7 @@ import DAO.ReturnBookDAO;
 import Entity.ReturnBook;
 import java.awt.Color;
 import javax.swing.JFrame;
+
 public class HomeBorrower extends javax.swing.JFrame {
 
     private User user;
@@ -30,16 +27,18 @@ public class HomeBorrower extends javax.swing.JFrame {
     private CallCardDAO callCardDAO;
     private int numberOfBooksBorrowing;
     private BooksDAO booksDAO;
+    private RecommenBookDAO recommendBook;
 //    FilterForm filterBook;
 //    private int numberOfBook;
 //    private Book book;
+
     /**
      * Creates new form HomLibrarian
      */
     public HomeBorrower(User user) {
         this.user = user;
         initComponents();
-        
+
         FilterForm filterForm = new FilterForm();
         booksDAO = new BooksDAO();
         List<Book> listBook = booksDAO.findAll(filterForm);
@@ -49,10 +48,10 @@ public class HomeBorrower extends javax.swing.JFrame {
         DefaultTableModel tbBooks = (DefaultTableModel) tableListBook.getModel();
         tbBooks.setRowCount(0);
         for (Book book : listBook) {
-            int numberOfBook = book.getTotalQuantity()-callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
-            tbBooks.addRow(new Object[]{book.getBookId(), book.getName(), book.getAuthor(), book.getSubject(),numberOfBook});
+            int numberOfBook = book.getTotalQuantity() - callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
+            tbBooks.addRow(new Object[]{book.getBookId(), book.getName(), book.getAuthor(), book.getSubject(), numberOfBook});
         }
-        
+
         ReturnBookDAO returnBookDAO = new ReturnBookDAO();
         ReloadAwaitingApproval();
         List<CallCard> callCards = callCardDAO.findByLibraryCard(user.getLibraryCard());
@@ -60,17 +59,23 @@ public class HomeBorrower extends javax.swing.JFrame {
         tbHistory.setRowCount(0);
         for (CallCard callCard : callCards) {
             ReturnBook returnBook = returnBookDAO.findByCallCardId(callCard.getCallCardId());
-            if(returnBook.getReturnBookId()==null){
-                tbHistory.addRow(new Object[]{callCard.getCallCardId(),callCard.getBorrowedDate().toString(),callCard.getBook().getName(),
-                callCard.getBook().getPublisher(),callCard.getBook().getYearOfPublisher(),callCard.getBook().getAuthor(),callCard.getBorrowedDay(),
-                "Chưa trả"});
+            if (returnBook.getReturnBookId() == null) {
+                tbHistory.addRow(new Object[]{callCard.getCallCardId(), callCard.getBorrowedDate().toString(), callCard.getBook().getName(),
+                    callCard.getBook().getPublisher(), callCard.getBook().getYearOfPublisher(), callCard.getBook().getAuthor(), callCard.getBorrowedDay(),
+                    "Chưa trả"});
+            } else {
+                tbHistory.addRow(new Object[]{callCard.getCallCardId(), callCard.getBook().getBookId(), callCard.getBook().getName(),
+                    callCard.getBorrowedDay(), callCard.getBorrowedDate().toString(),
+                    returnBook.getPayDay().toString(), returnBook.getStatus(), returnBook.getFines(), returnBook.getNote()});
             }
-            else{
-                tbHistory.addRow(new Object[]{callCard.getCallCardId(),callCard.getBook().getBookId(), callCard.getBook().getName(),
-                callCard.getBorrowedDay(),callCard.getBorrowedDate().toString(),
-                returnBook.getPayDay().toString(),returnBook.getStatus(),returnBook.getFines(),returnBook.getNote()});
-            }   
         }
+
+//        List<Book> recommendedBookList = booksDAO.getRecommendedBooks();
+//        DefaultTableModel tableModel = (DefaultTableModel) tableRecommendedBooks.getModel();
+//        tableModel.setRowCount(0);
+//        for (Book book : recommendedBookList) {
+//            tableModel.addRow(new Object[]{book.getBookId(), book.getName(), book.getAuthor(), book.getSubject(), book.getTotalQuantity()});
+//        }
     }
 
     public HomeBorrower() {
@@ -473,16 +478,16 @@ public class HomeBorrower extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        if (TableAwaitingApproval.getSelectedRow() == -1 ) {
+        if (TableAwaitingApproval.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để xóa ! ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }  else {
+        } else {
             int[] rows = TableAwaitingApproval.getSelectedRows();
             for (int i : rows) {
                 String bookAwaitId = TableAwaitingApproval.getModel().getValueAt(i, 0).toString();
                 awaitingApprovalDAO.deleteById(bookAwaitId);
             }
 //            resetTableAwait();
-              ReloadAwaitingApproval();
+            ReloadAwaitingApproval();
         }
         //
         reloadNumberOfBooksBorrowing();
@@ -496,68 +501,71 @@ public class HomeBorrower extends javax.swing.JFrame {
         // TODO add your handling code here:
         reloadNumberOfBooksBorrowing();
         ReloadAwaitingApproval();
-        
+
         if (tableListBook.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để đăng kí mượn", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-        else if(numberOfBooksBorrowing<5){
+        } else if (numberOfBooksBorrowing < 5) {
             String bookId = tableListBook.getModel().getValueAt(tableListBook.getSelectedRow(), 0).toString();
             Book book = booksDAO.findByBookId(bookId);
-            int numberOfBook = book.getTotalQuantity()-callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
-            if(numberOfBook<=0){
-            JOptionPane.showMessageDialog(null, "Đã hết sách", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-            else {
+            int numberOfBook = book.getTotalQuantity() - callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
+            if (numberOfBook <= 0) {
+                JOptionPane.showMessageDialog(null, "Đã hết sách", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } else {
                 AwaitingApproval awaitingApproval = new AwaitingApproval();
-            awaitingApproval.setBook(book);
-            awaitingApproval.setUser(user);
+                awaitingApproval.setBook(book);
+                awaitingApproval.setUser(user);
 
-            switch (book.getSubject()) {
-                case "Sách kỹ năng":
-                awaitingApproval.setBorrowedDay(21);
-                break;
-                case "Sách truyện":
-                awaitingApproval.setBorrowedDay(25);
-                break;
-                case "Tài liệu":
-                awaitingApproval.setBorrowedDay(60);
-                break;
-                case "Sách Khoa học công nghệ – Kinh tế":
-                awaitingApproval.setBorrowedDay(15);
-                break;
-                case "Sách Văn học nghệ thuật":
-                awaitingApproval.setBorrowedDay(15);
-                break;
-                case "Sách Văn hóa xã hội – Lịch sử":
-                awaitingApproval.setBorrowedDay(14);
-                break;
-                case "Sách Giáo trình":
-                awaitingApproval.setBorrowedDay(45);
-                break;
-                case "Sách Truyện, tiểu thuyết":
-                awaitingApproval.setBorrowedDay(25);
-                break;
-                case "Sách Tâm lý, tâm linh, tôn giáo":
-                awaitingApproval.setBorrowedDay(10);
-                break;
-                case "Sách thiếu nhi":
-                awaitingApproval.setBorrowedDay(7);
-                break;
-                default:
-                break;
-            }
+                switch (book.getSubject()) {
+                    case "Sách kỹ năng":
+                        awaitingApproval.setBorrowedDay(21);
+                        break;
+                    case "Sách truyện":
+                        awaitingApproval.setBorrowedDay(25);
+                        break;
+                    case "Tài liệu":
+                        awaitingApproval.setBorrowedDay(60);
+                        break;
+                    case "Sách Khoa học công nghệ – Kinh tế":
+                        awaitingApproval.setBorrowedDay(15);
+                        break;
+                    case "Sách Văn học nghệ thuật":
+                        awaitingApproval.setBorrowedDay(15);
+                        break;
+                    case "Sách Văn hóa xã hội – Lịch sử":
+                        awaitingApproval.setBorrowedDay(14);
+                        break;
+                    case "Sách Giáo trình":
+                        awaitingApproval.setBorrowedDay(45);
+                        break;
+                    case "Sách Truyện, tiểu thuyết":
+                        awaitingApproval.setBorrowedDay(25);
+                        break;
+                    case "Sách Tâm lý, tâm linh, tôn giáo":
+                        awaitingApproval.setBorrowedDay(10);
+                        break;
+                    case "Sách thiếu nhi":
+                        awaitingApproval.setBorrowedDay(7);
+                        break;
+                    default:
+                        break;
+                }
 
-            picks.add(awaitingApproval);
-            AwaitingApprovalDAO awaitingApprovalDAO = new AwaitingApprovalDAO();
-            awaitingApprovalDAO.save(picks);
-            picks.clear();
-            reloadNumberOfBooksBorrowing();
-            ReloadAwaitingApproval();  
+                picks.add(awaitingApproval);
+                AwaitingApprovalDAO awaitingApprovalDAO = new AwaitingApprovalDAO();
+                awaitingApprovalDAO.save(picks);
+                picks.clear();
+                reloadNumberOfBooksBorrowing();
+                ReloadAwaitingApproval();
+                RecommenBookDAO recommendBook = new RecommenBookDAO();
+                List<Book> recommend = recommendBook.recommendBook(user.getLibraryCard());
+                System.out.println("This is recommend book for user");
+                for (Book bookRecommend : recommend) {
+                    System.out.println(bookRecommend);
+                }
 //            resetTableBooks(filterBook);
             }
-            
-        }
-        else if(numberOfBooksBorrowing>=5){
+
+        } else if (numberOfBooksBorrowing >= 5) {
             JOptionPane.showMessageDialog(null, "Bạn đã mượn quá số sách , Mỗi người chỉ được mượn tối đa cùng lúc 5 quyển ", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButton3MouseClicked
@@ -573,31 +581,31 @@ public class HomeBorrower extends javax.swing.JFrame {
             filterForm.setTypeFilter("subject");
             filterForm.setFilter(typeSubjectFilter.getSelectedItem().toString());
         }
-        if(typeSubjectFilter.getSelectedItem().equals("Tất cả")){
+        if (typeSubjectFilter.getSelectedItem().equals("Tất cả")) {
             filterForm.setTypeFilter("");
             filterForm.setFilter("");
         }
         switch (typeSearch.getSelectedItem().toString()) {
             case "Tất cả":
-            filterForm.setTypeSearch("`name` LIKE '%" + inputSearch.getText() + "%' OR `author`");
-            filterForm.setSearch(inputSearch.getText());
-            break;
+                filterForm.setTypeSearch("`name` LIKE '%" + inputSearch.getText() + "%' OR `author`");
+                filterForm.setSearch(inputSearch.getText());
+                break;
             case "Tên Sách":
-            filterForm.setTypeSearch("name");
-            filterForm.setSearch(inputSearch.getText());
-            break;
+                filterForm.setTypeSearch("name");
+                filterForm.setSearch(inputSearch.getText());
+                break;
             case "Tên Tác Giả":
-            filterForm.setTypeSearch("author");
-            filterForm.setSearch(inputSearch.getText());
-            break;
+                filterForm.setTypeSearch("author");
+                filterForm.setSearch(inputSearch.getText());
+                break;
             default:
-            break;
+                break;
         }
         List<Book> listBook = booksDAO.findAll(filterForm);
         DefaultTableModel tbBooks = (DefaultTableModel) tableListBook.getModel();
 //        tbBooks.setRowCount(0);
         for (Book book : listBook) {
-            int numberOfBook = book.getTotalQuantity()-callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
+            int numberOfBook = book.getTotalQuantity() - callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId());
             tbBooks.addRow(new Object[]{book.getBookId(), book.getName(), book.getAuthor(), book.getSubject(), numberOfBook});
         }
     }//GEN-LAST:event_buttonSearchMouseClicked
@@ -648,19 +656,19 @@ public class HomeBorrower extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void ReloadAwaitingApproval(){
-        awaitingApprovalList=awaitingApprovalDAO.findByLibraryCard(user.getLibraryCard());
+
+    public void ReloadAwaitingApproval() {
+        awaitingApprovalList = awaitingApprovalDAO.findByLibraryCard(user.getLibraryCard());
         DefaultTableModel tableAwaitingApproval = (DefaultTableModel) TableAwaitingApproval.getModel();
         tableAwaitingApproval.setRowCount(0);
         for (AwaitingApproval awaitingApproval : awaitingApprovalList) {
-            tableAwaitingApproval.addRow(new Object[]{awaitingApproval.getId(), awaitingApproval.getBook().getBookId()
-                    ,awaitingApproval.getBook().getName(),awaitingApproval.getBook().getAuthor(), awaitingApproval.getBook().getSubject(),
-                    awaitingApproval.getBorrowedDay()});
+            tableAwaitingApproval.addRow(new Object[]{awaitingApproval.getId(), awaitingApproval.getBook().getBookId(),
+                awaitingApproval.getBook().getName(), awaitingApproval.getBook().getAuthor(), awaitingApproval.getBook().getSubject(),
+                awaitingApproval.getBorrowedDay()});
         }
         reloadNumberOfBooksBorrowing();
     }
-    
+
 //    public void resetTableBooks(FilterForm filterForm) {
 //        List<Book> listBook = booksDAO.findAll(filterForm);
 //        DefaultTableModel tbBooks = (DefaultTableModel) tableListBook.getModel();
@@ -670,8 +678,7 @@ public class HomeBorrower extends javax.swing.JFrame {
 //            tbBooks.addRow(new Object[]{book.getBookId(), book.getName(), book.getAuthor(), book.getSubject(),callCardDAO.numberOfBorrowingBooksByBookId(book.getBookId()),numberOfBook});
 //        }
 //    }
-
-    public void reloadNumberOfBooksBorrowing(){
+    public void reloadNumberOfBooksBorrowing() {
         numberOfBooksBorrowing = 0;
         numberOfBooksBorrowing += callCardDAO.numberOfBorrowingBooksByUser(user.getLibraryCard());
         numberOfBooksBorrowing += awaitingApprovalDAO.numberOfAwtingApprovalByUser(user.getLibraryCard());
