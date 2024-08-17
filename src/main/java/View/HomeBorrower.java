@@ -558,6 +558,7 @@ public class HomeBorrower extends javax.swing.JFrame {
                 ReloadAwaitingApproval();
                 RecommenBookDAO recommendBook = new RecommenBookDAO();
                 List<Book> recommend = recommendBook.recommendBook(user.getLibraryCard());
+                System.out.println(recommend);
                 System.out.println("This is recommend book for user");
                 for (Book bookRecommend : recommend) {
                     System.out.println(bookRecommend);
