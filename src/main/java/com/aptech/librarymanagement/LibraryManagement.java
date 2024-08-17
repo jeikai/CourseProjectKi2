@@ -7,10 +7,6 @@ package com.aptech.librarymanagement;
 
 import View.Login;
 
-/**
- *
- * @author Nguyen Dai Phat
- */
 public class LibraryManagement {
 
     public static void main(String[] args) {
